@@ -118,7 +118,7 @@ export const steps = [
     type: 'text',
     images: ['10-illustration-scribble-3.png'], // Reuse scribble since no specific 13 image provided
     text: "เขาร้องไห้\nปลอบใจเด็กคนนี้หน่อย...",
-    placeholder: "(ตัวอย่าง)ไม่เป็นไรนะ อดทนได้ดีมาก\nเธอทำได้ดีและเก่งที่สุด แต่อดทนอีก\nสักแปปนะ เดี๋ยวมันก็จะผ่านไป..และ\nเธอจะผ่านไปได้แน่",
+    placeholder: "คำตอบ",
     background: 'B'
   },
   // 14

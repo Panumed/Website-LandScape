@@ -44,8 +44,11 @@
             </div>
           </div>
         </div>
-          <button v-if="formData.name" @click.stop="saveOnboarding" class="px-8 py-2 border-[1.5px] border-gray-400 rounded-full text-gray-800 hover:bg-gray-200 hover:border-gray-600 active:bg-gray-300 active:scale-[0.98] focus:bg-gray-200 transition-all text-xl font-medium">
-        </div>
+          <div class="mt-8 flex justify-center">
+            <button v-if="formData.name" @click.stop="saveOnboarding" class="px-8 py-2 border-[1.5px] border-gray-400 rounded-full text-gray-800 hover:bg-gray-200 hover:border-gray-600 active:bg-gray-300 active:scale-[0.98] focus:bg-gray-200 transition-all text-xl font-medium">
+              ไปต่อ ->
+            </button>
+          </div>
       </div>
 
       <!-- Menu Type -->

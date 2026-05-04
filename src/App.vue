@@ -1,6 +1,20 @@
 <template>
   <div class="fixed inset-0 bg-[#2a2a2a] flex items-center justify-center font-sans overflow-hidden">
     
+    <!-- Background Music -->
+    <audio ref="bgmAudio" loop :src="bgmFile"></audio>
+    
+    <!-- Music Toggle Button (fixed to top right) -->
+    <button @click="toggleMusic" class="fixed top-4 right-4 z-50 p-3 bg-black/10 hover:bg-black/20 rounded-full backdrop-blur-md transition-all text-gray-500 hover:text-gray-800">
+      <svg v-if="isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5 19h4.586a1 1 0 00.707-.293l5.414-5.414A1 1 0 0016 12.586V11.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 009.586 5H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+      </svg>
+    </button>
+
     <!-- Dynamic Container: Starts full screen, shrinks to mobile -->
     <div 
       ref="containerRef"
@@ -39,16 +53,39 @@ import { steps } from './data/steps'
 import BackgroundA from './components/BackgroundA.vue'
 import BackgroundB from './components/BackgroundB.vue'
 import StepRenderer from './components/StepRenderer.vue'
+import bgmFile from './assets/bgm.mp3'
 
 // 'idle' -> 'full' -> 'shrinking' -> 'done'
 const shrinkPhase = ref('idle')
 const containerRef = ref(null)
+
+const bgmAudio = ref(null)
+const isPlaying = ref(false)
+
+const toggleMusic = () => {
+  if (!bgmAudio.value) return
+  if (isPlaying.value) {
+    bgmAudio.value.pause()
+    isPlaying.value = false
+  } else {
+    bgmAudio.value.play().then(() => {
+      isPlaying.value = true
+    }).catch(e => console.error("Audio playback failed", e))
+  }
+}
 
 const currentStepData = computed(() => {
   return steps.find(s => s.id === store.currentStep) || steps[0]
 })
 
 const enterFullscreen = async () => {
+  // Start music on first interaction
+  if (bgmAudio.value && bgmAudio.value.paused) {
+    bgmAudio.value.play().then(() => {
+      isPlaying.value = true
+    }).catch(e => console.error("Auto-play failed", e))
+  }
+
   // If the shrink is already done, the button acts as a 'Next' button to actually change the page
   if (shrinkPhase.value === 'done') {
     shrinkPhase.value = 'completed'
