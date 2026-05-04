@@ -61,8 +61,13 @@
           <button 
             v-for="opt in step.choices" 
             :key="opt.id"
-            @click.stop="selectCategory(opt.text)"
-            class="w-full px-4 py-3 rounded-full border border-gray-300 hover:bg-gray-200 hover:border-gray-500 hover:text-gray-900 active:bg-gray-300 active:scale-[0.98] focus:bg-gray-200 focus:border-gray-500 transition-all text-center text-gray-600 text-lg cursor-pointer"
+            @click.stop="selectCategory(opt)"
+            :class="[
+              'w-full px-4 py-3 rounded-full border transition-all text-center text-lg cursor-pointer',
+              selectedChoiceId === opt.id 
+                ? 'bg-gray-800 border-gray-800 text-white font-semibold scale-[0.98]'
+                : 'border-gray-300 hover:bg-gray-200 hover:border-gray-500 hover:text-gray-900 text-gray-600 active:bg-gray-300 active:scale-[0.98]'
+            ]"
           >
             {{ opt.text }}
           </button>
@@ -79,8 +84,13 @@
           <button 
             v-for="opt in step.choices" 
             :key="opt.id"
-            @click.stop="selectChoice(opt.text)"
-            class="w-full px-4 py-3 rounded-full border border-gray-300 hover:bg-gray-200 hover:border-gray-500 hover:text-gray-900 active:bg-gray-300 active:scale-[0.98] focus:bg-gray-200 focus:border-gray-500 transition-all text-center text-gray-600 text-lg cursor-pointer"
+            @click.stop="selectChoice(opt)"
+            :class="[
+              'w-full px-4 py-3 rounded-full border transition-all text-center text-lg cursor-pointer',
+              selectedChoiceId === opt.id 
+                ? 'bg-gray-800 border-gray-800 text-white font-semibold scale-[0.98]'
+                : 'border-gray-300 hover:bg-gray-200 hover:border-gray-500 hover:text-gray-900 text-gray-600 active:bg-gray-300 active:scale-[0.98]'
+            ]"
           >
             {{ opt.text }}
           </button>
@@ -155,6 +165,7 @@ const formData = ref({
 })
 
 const textAnswer = ref('')
+const selectedChoiceId = ref(null)
 
 const getImageUrl = (name) => {
   return new URL(`../assets/${name}`, import.meta.url).href
@@ -194,14 +205,22 @@ const saveOnboarding = () => {
   handleNext()
 }
 
-const selectCategory = (category) => {
-  store.userData.category = category
-  handleNext()
+const selectCategory = (opt) => {
+  if (selectedChoiceId.value) return
+  selectedChoiceId.value = opt.id
+  setTimeout(() => {
+    store.userData.category = opt.text
+    handleNext()
+  }, 400)
 }
 
-const selectChoice = (choice) => {
-  store.saveAnswer(props.step.id, choice)
-  handleNext()
+const selectChoice = (opt) => {
+  if (selectedChoiceId.value) return
+  selectedChoiceId.value = opt.id
+  setTimeout(() => {
+    store.saveAnswer(props.step.id, opt.text)
+    handleNext()
+  }, 400)
 }
 
 const submitText = () => {
@@ -220,6 +239,7 @@ const restart = () => {
 // Reset local state when step changes
 watch(() => props.step.id, (newId) => {
   textAnswer.value = ''
+  selectedChoiceId.value = null
   if (newId === 1) {
     formData.value = { name: '', age: '', gender: '' }
   }
